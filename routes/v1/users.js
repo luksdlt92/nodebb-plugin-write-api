@@ -13,6 +13,18 @@ var Users = require.main.require('./src/user'),
 module.exports = function(/*middleware*/) {
 	var app = require('express').Router();
 
+	app.get('/testing', apiMiddleware.requireUser, apiMiddleware.requireAdmin, function(req, res) {
+		if (!utils.checkRequired(['username'], req, res)) {
+			return false;
+		}
+
+		Users.getUidByUsername(req.body.username, function(err, uid) {
+			return errorHandler.handle(err, res, {
+				uid: uid
+			});
+		});
+	});
+
 	app.post('/', apiMiddleware.requireUser, apiMiddleware.requireAdmin, function(req, res) {
 		if (!utils.checkRequired(['username'], req, res)) {
 			return false;
